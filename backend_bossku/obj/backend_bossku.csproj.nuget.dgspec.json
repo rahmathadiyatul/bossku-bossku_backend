@@ -44,6 +44,10 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.1.24, )"
+            },
             "Microsoft.AspNet.Cors": {
               "target": "Package",
               "version": "[5.2.9, )"
@@ -60,9 +64,17 @@
               "target": "Package",
               "version": "[2.2.0, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.14, )"
+            },
             "MySql.Data": {
               "target": "Package",
-              "version": "[8.0.30, )"
+              "version": "[8.2.0, )"
+            },
+            "MySql.Data.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.22, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

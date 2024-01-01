@@ -13,10 +13,10 @@ namespace backend_bossku._3_Data
     {
         public static void Register(IConfiguration configuration, IServiceCollection services)
         {
-            services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-            services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
         }
     }
 }

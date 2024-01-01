@@ -13,10 +13,10 @@ namespace backend_bossku._2_Service
     {
         public static void Register(IConfiguration configuration, IServiceCollection services)
         {
-            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IServiceService, ServiceService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
-            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IProjectService, ProjectService>();
         }
     }
 }

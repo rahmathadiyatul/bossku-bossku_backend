@@ -50,7 +50,7 @@ namespace backend_bossku.Controllers
         }
         [Route("Api/[controller]/Login")]
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<UserJWT> Login([FromBody] loginUser user)
         {
             IActionResult response = Unauthorized();
