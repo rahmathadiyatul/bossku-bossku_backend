@@ -12,43 +12,43 @@ namespace backend_bossku._3_Data.Data
     {
         public string CreateUser()
         {
-            var result = "INSERT INTO dbo.users " +
-                "(name, email, password) VALUES " +
-                "(@Name, @Email, @Password);";
+            var result = "INSERT INTO users " +
+                "(name, email, password, role) VALUES " +
+                "(@Name, @Email, @Password, 'user');";
             return result;
         }
         public string GetPassword()
         {
-            var result = "SELECT TOP 1 email, password FROM dbo.users WHERE email = @Email;";
+            var result = "SELECT email, password FROM users WHERE email = @Email LIMIT 1;";
             return result;
         }
 
         public string GetUser()
         {
-            var result = "SELECT TOP 1 idUser, name, email, password FROM dbo.users WHERE email = @Email;";
+            var result = "SELECT idUser, name, email, password, role FROM users WHERE email = @Email LIMIT 1;";
             return result;
         }
 
         public string LoginUser()
         {
-            var result = "SELECT * FROM dbo.users WHERE email = @Email;";
+            var result = "SELECT * FROM users WHERE email = @Email;";
             return result;
         }
         public string UpdateUser()
         {
-            var result = "UPDATE dbo.users SET password=@Password WHERE email=@Email;";
+            var result = "UPDATE users SET password=@Password WHERE email=@Email;";
             return result; 
         }
         /*        public async Task<bool> DeleteUser(int id)
                 {
-                    await _dBService.DeleteDataUser("DELETE FROM dbo.user u " +
+                    await _dBService.DeleteDataUser("DELETE FROM user u " +
                         "WHERE u.idUser = @id;", new { id });
                     return true;
                 }*/
 
         /*        public async Task<List<User>> GetUser()
                 {
-                    var result = await _dBService.GetDataUser<User>("SELECT * FROM dbo.user");
+                    var result = await _dBService.GetDataUser<User>("SELECT * FROM user");
                     return result;
                 }*/
 

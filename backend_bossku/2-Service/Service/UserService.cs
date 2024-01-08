@@ -1,35 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using backend_bossku._1_Core.Entities;
 using backend_bossku._2_Service.Service.Interface;
-using backend_bossku._3_Data.Data;
 using backend_bossku._3_Data.Data.Interface;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Identity;
 using backend_bossku._1_Core.Entities.SubEntities;
+using MySql.Data.MySqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace backend_bossku._2_Service.Service
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
-        private readonly SqlConnection _db;
+        private readonly MySqlConnection _db;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IConfiguration configuration)
         {
             this.userRepository = userRepository;
-            _db = new SqlConnection("data source=.; database=SoupDatabase; integrated security=SSPI");
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            _db = new MySqlConnection(connectionString);
         }
         public async Task<bool> Create([FromBody] User user)
         {
             var command = userRepository.CreateUser();
             string pwdHashed = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            using (SqlCommand cmd = new SqlCommand(command, _db))
+            using (MySqlCommand cmd = new MySqlCommand(command, _db))
             {
                 cmd.Parameters.AddWithValue("@Name", user.Name);
                 cmd.Parameters.AddWithValue("@Email", user.Email);
@@ -45,19 +42,20 @@ namespace backend_bossku._2_Service.Service
         {
             string command = userRepository.GetPassword();
             var result = new List<loginUser>();
-            using (SqlCommand cmd = new SqlCommand(command, _db))
+            using (MySqlCommand cmd = new MySqlCommand(command, _db))
             {
                 await _db.OpenAsync();
                 cmd.Parameters.AddWithValue("@Email", email);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-                while (reader.Read())
+                using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    result.Add(new loginUser
+                    while (reader.Read())
                     {
-                        Email = reader["Email"].ToString(),
-                        Password = reader["Password"].ToString(),
-                    });
+                        result.Add(new loginUser
+                        {
+                            Email = reader["Email"].ToString(),
+                            Password = reader["Password"].ToString(),
+                        });
+                    }
                 }
                 await _db.CloseAsync();
             }
@@ -68,16 +66,17 @@ namespace backend_bossku._2_Service.Service
         {
             string command = userRepository.GetUser();
             var result = new User();
-            using (SqlCommand cmd = new SqlCommand(command, _db))
+            using (MySqlCommand cmd = new MySqlCommand(command, _db))
             {
                 await _db.OpenAsync();
                 cmd.Parameters.AddWithValue("@Email", email);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (reader.Read())
+                using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    result.Name = reader["name"].ToString();
-                    result.IdUser = Convert.ToInt32(reader["idUser"]);
-
+                    while (reader.Read())
+                    {
+                        result.Name = reader["name"].ToString();
+                        result.IdUser = Convert.ToInt32(reader["idUser"]);
+                    }
                 }
                 await _db.CloseAsync();
                 return result;
@@ -88,22 +87,24 @@ namespace backend_bossku._2_Service.Service
         {
             string command = userRepository.LoginUser();
             string result = "";
-            using (SqlCommand cmd = new SqlCommand(command, _db))
+            using (MySqlCommand cmd = new MySqlCommand(command, _db))
             {
                 await _db.OpenAsync();
                 cmd.Parameters.AddWithValue("@Email", user.Email);
-                SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                while (reader.Read())
+                using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    string resEmail = reader["Email"].ToString();
-                    string resPassword = reader["Password"].ToString();
-                    if (user.Email == resEmail && BCrypt.Net.BCrypt.Verify(user.Password, resPassword) == true)
+                    while (reader.Read())
                     {
-                        result = "You've been logged in";
-                    }
-                    else
-                    {
-                        result = "Account Invalid!";
+                        string resEmail = reader["Email"].ToString();
+                        string resPassword = reader["Password"].ToString();
+                        if (user.Email == resEmail && BCrypt.Net.BCrypt.Verify(user.Password, resPassword))
+                        {
+                            result = "You've been logged in";
+                        }
+                        else
+                        {
+                            result = "Account Invalid!";
+                        }
                     }
                 }
                 await _db.CloseAsync();
@@ -115,7 +116,7 @@ namespace backend_bossku._2_Service.Service
         {
             string command = userRepository.UpdateUser();
             string pwdHashed = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            using (SqlCommand cmd = new SqlCommand(command, _db))
+            using (MySqlCommand cmd = new MySqlCommand(command, _db))
             {
                 cmd.Parameters.AddWithValue("@Email", user.Email);
                 cmd.Parameters.AddWithValue("@Password", pwdHashed);
