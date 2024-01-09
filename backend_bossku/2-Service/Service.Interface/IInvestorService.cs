@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace backend_bossku._2_Service.Service.Interface
 {
-    public interface IProjectService
+    public interface IInvestorService
     {
-        public Task<bool> CreateCart(Project cart);
+        public Task<bool> Signup(Investor investor);
 /*        public Task<CartContent> GetCartByUserId(int userId);
 */    }
 }

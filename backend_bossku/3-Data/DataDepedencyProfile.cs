@@ -16,7 +16,7 @@ namespace backend_bossku._3_Data
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IInvestorRepository, InvestorRepository>();
         }
     }
 }

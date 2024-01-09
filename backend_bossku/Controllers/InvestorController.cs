@@ -15,22 +15,22 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 namespace backend_bossku.Controllers
 {
     [ApiController]
-    public class ProjectController : Controller
+    public class InvestorController : Controller
     {
-        private readonly IProjectService cartService;
+        private readonly IInvestorService investorService;
         private readonly IConfiguration _config;
-        public ProjectController(IProjectService cartService, IConfiguration config)
+        public InvestorController(IInvestorService investorService, IConfiguration config)
         {
-            this.cartService = cartService;
+            this.investorService = investorService;
             _config = config;
         }
 
-        [Route("Api/[controller]/Create")]
+        [Route("Api/[controller]/Signup")]
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Project cart)
+        public async Task<ActionResult> Create([FromBody] Investor investor)
         {
 
-            var result = await cartService.CreateCart(cart);
+            var result = await investorService.Signup(investor);
             if (result == true)
             {
                 return Ok(result);
