@@ -17,6 +17,7 @@ namespace backend_bossku._2_Service
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<IInvestorService, InvestorService>();
+            services.AddScoped<IEmailSender, EmailSender>();
         }
     }
 }

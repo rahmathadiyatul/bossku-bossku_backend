@@ -1,6 +1,9 @@
 using System.Linq;
 using System.Text;
+using backend_bossku._1_Core.Entities;
 using backend_bossku._2_Service;
+using backend_bossku._2_Service.Service;
+using backend_bossku._2_Service.Service.Interface;
 using backend_bossku._3_Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +48,10 @@ namespace BossKu
             {
                 c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); //This line
             });
+
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.AddSingleton<IEmailSender, EmailSender>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -61,7 +68,7 @@ namespace BossKu
                 });
                 services.AddMvc();
             }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

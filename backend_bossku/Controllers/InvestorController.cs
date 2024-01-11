@@ -18,11 +18,13 @@ namespace backend_bossku.Controllers
     public class InvestorController : Controller
     {
         private readonly IInvestorService investorService;
+        private readonly IEmailSender emailSender;
         private readonly IConfiguration _config;
-        public InvestorController(IInvestorService investorService, IConfiguration config)
+        public InvestorController(IInvestorService investorService, IConfiguration config, IEmailSender emailSender)
         {
             this.investorService = investorService;
             _config = config;
+            this.emailSender = emailSender;
         }
 
         [Route("Api/[controller]/Signup")]
@@ -31,20 +33,25 @@ namespace backend_bossku.Controllers
         {
 
             var result = await investorService.Signup(investor);
-            if (result == true)
+            if (result)
             {
+                // Send confirmation email
+                await emailSender.SendEmailAsync(investor.Email, investor.FullName);
+
                 return Ok(result);
-            } else
+            }
+            else
             {
                 return BadRequest(new Exception("Server Error!"));
             }
         }
-/*        [Route("Api/[controller]/Get")]
-        [HttpPost]
-        public async Task<CartContent> Get([FromBody] int userId)
-        {
-            var result = await cartService.GetCartByUserId(userId);
-            return result;
-        }*/
+
+        /*        [Route("Api/[controller]/Get")]
+                [HttpPost]
+                public async Task<CartContent> Get([FromBody] int userId)
+                {
+                    var result = await cartService.GetCartByUserId(userId);
+                    return result;
+                }*/
     }
 }
